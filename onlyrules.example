@@ -1,0 +1,69 @@
+# leg20170304: CC0, Public Domain
+#
+# This is a command filter configuration file for the 'only' utility.
+# In fact it is a sed(1) script which is fed one line of input
+# composed of the allowed command (in the authorized_keys file) and
+# all command line arguments separated by single spaces.
+#
+# The template for a matching filter is:
+#
+#     \:^command argument_filter:{p;q}
+#
+# Where _command_ is the allowed command string and _argument_filter_
+# is a regular expression to match allowed commandlines.
+# The {p;q} at the end of the line prints the matched line on stdout
+# and quits the matching process.  So the first matching line wins.
+# Order your filters from specific to general.
+#
+# To blacklist a certain combination of commandline arguments use:
+#
+#     \:^command blocking_filter:q'
+#
+# This quits immediately at the matching line without printing
+# anything, thus disabling the respective match.
+#
+# We use \: ... : instead of / ... / to delimit regular expressions,
+# because filters typically involve paths with forward slashes.  Also
+# the s/regexp/subst/ command is expressed as s:regexp:subst: for the
+# same reason.
+#
+# The following examples illustrate several techniques for writing
+# rules.
+#
+# Examples for substituting arguments or whole commands
+# ps -> ps -ef
+\:^ps$:{
+    c\
+ps -ef
+    q
+}
+# vmstat -> vmstat 1 100
+\:^vmstat$:{
+    c\
+vmstat 1 100
+    q
+}
+# cups stop|start -> /etc/init.d/cupsys stop|start
+\:^cups \(stop\|start\)$:{
+    s:^cups \(.*\):/etc/init.d/cupsys \1:p
+    q
+}	
+#
+# Allowing darcs commands.
+#
+# We show how to blacklist a certain pattern beforehand. We disallow
+# '..' in a path given to the --repodir option.  The repodir option
+# can be given as: --repodir path or --repodir='path'
+\:--repodir\( \|='\)\(.*/\.\..*\):q
+#' neither do we allow repodirs with absolute paths
+\:--repodir\( \|='\)/:q
+#'
+\:^darcs transfer-mode --repodir [^/]:{p;q}
+\:^darcs initialize --repodir='[^/].*' --darcs-2:{p;q}
+\:^darcs apply --all --repodir '[^/].*':{p;q}
+#
+\:^ls '/tmp/a b'$:{p;q}
+\:^/bin/ls '/tmp/a b'$:{p;q}
+# Allow `ls /tmp` or `ls '/tmp'`
+\:^ls '\?/tmp'\?$:{p;q}
+

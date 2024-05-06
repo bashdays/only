@@ -1,0 +1,35 @@
+# -*- mode: sh -*-
+# leg20170305
+#
+# This is the example configuration file for 'only'
+#
+# The only thing you can configure here is to make 'only' more verbose
+# or to enable command substitution.  Both are generally not good
+# ideas and we recommend to run 'only' without any configuration file
+# at all.
+#
+#
+# Configuration options are just tokens at the very beginning of a
+# line.  If you want to enable one, just remove the comment.
+#
+# Print 'denied' to stderr, so a user can figure out the program was
+# not run.
+#show_terse_denied
+#
+# Enable command line substitution via ~/.onlyrules 
+#enable_command_line_substitution
+#
+# Show which commands are allowed
+#show_allowed
+#
+# Feed back a denied command line to the invoking user
+#show_denied
+#
+# Show a help text to the user.  The text is everything after the line
+# with the help_text token to the end of the file.
+#help_text
+
+This is the 'only' help text shown, when you send a command line
+which is not accepted by 'only'.
+
+
